@@ -1,0 +1,1082 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<!--
+	 SDMetrics V2.0 metric definitions for the Gentleware Poseidon 4 metamodel
+
+	 Willian Nalepa Oizumi
+	 UEM - University of Maringa
+-->
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+
+<!-- Concern Difusion & Concern Based Cohesion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- Business -->
+	
+	<metric name="IsBusiness" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Business.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Business", and value 0 for interfaces that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<metric name="IsBusiness" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Business.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Business", and value 0 for interfaces that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<!-- A versão do Poseidon que estamos utilizando trata interface requerida como sendo uma dependência,
+		dessa forma as métricas que consideram interfaces requeridas devem utilizar o domínio "dependency" -->
+	<metric name="IsBusiness" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Business.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Business", and value 0 for dependencies that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Business'" />
+	</metric>	
+	
+	<metric name="IsBusiness" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Business.
+		((p)) This metric has value 1 for components with stereotype
+		"Business", and value 0 for components that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="BusinessOperations" domain="interface">
+	<description>
+		The set of operations assigned to Business via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsBusiness=1" />
+	</set>	
+	
+	<!-- context é o "pai" do elemento, nesse caso colocamos em um conjunto(set)
+		todas as operações pertencentes a interfaces que tem o resultado da métrica IsBusiness
+		igual a 1 e o resultado da métrica BusinessInterfaceViaCP maior que zero-->
+	<set name="BusinessOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Business via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsBusiness=1) or (context.BusinessInterfaceViaCP > 0)"/>
+	</set>
+	
+	<!-- com multiset="false" não permitimos elementos repetidos no conjunto, 
+		dessa forma conseguimos fazer a união de dois ou mais conjuntos -->
+	<set name="TotalBusinessOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Business.
+	</description>
+	<projection relation="context" target="interface" set="BusinessOperations+BusinessOperationsViaIF" />
+	</set>
+	
+	<!-- os conjuntos não aparecem nos resultados das métricas,
+		então é necessário fazer uma métrica que exiba o tamanho do conjunto-->
+	<metric name="BusinessCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Business concern.
+	</description>
+	<compoundmetric term="size(TotalBusinessOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="BusinessInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Business through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsBusiness=1"/>
+	</metric>
+	
+	<!-- abssupplier é o fornecedor da relação e absclient é o dependente da relação,
+		nesse caso a métrica está verificando se existe um componente(cliente) que satisfaça a uma condição. -->
+	<metric name="BusinessInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Business through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsBusiness=1"/>
+	</metric>
+	
+	<!-- compoundmetric tem a finalidade de agrupar várias métricas em uma só,
+		mas essas métricas devem ser para o mesmo domínio da métrica composta. Além disso,
+		pode ser utilizado para considerar o resultado de uma outra métrica do mesmo domínio. -->
+	<metric name="AUXBusinessCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Business.
+	</description>
+	<compoundmetric	condition="(IsBusiness=1) or (BusinessInterfaceViaOP > 0) or (BusinessInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<!-- o elemento do tipo "dependency" possui depclient e depsupplier.
+		É possível "acessar" métricas desses elementos através do operador .(ponto).
+		No caso acessamos a métrica IsBusiness do depclient.-->
+	<metric name="AUXBusinessCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Business.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsBusiness=1) or (depclient.IsBusiness=1))"/>
+	</metric>
+	
+	<!-- Quando estabelecemos métricas com nomes iguais e domínios diferentes, 
+		podemos fazer métricas que consideram os elementos de todos os tipos de 
+		domínios para os quais a métrica foi definida. Nesse caso, contamos todos os elementos
+		dos tipos "interface" e "dependency" dentro do domínio "model" que possuem o resultado da métrica AUXBusinessCDAI igual a 1. -->
+	<metric name="BusinessCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Business concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXBusinessCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="BusinessIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Business' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsBusiness=1) or (BusinessInterfaceViaOP > 0) or (BusinessInterfaceViaCP > 0)" />
+	</metric>
+
+	<!-- Essa métrica acessa a dependencia por meio do componente. 
+		O component, que é o elemento para o qual estamos contando a métrica, é o client da dependência, 
+		a interface é o supplier e dependency e a relação e o elemento que nos interessa. 
+		Assim, ele conta a quantidade de dependencias que satisfaçam a condição estabelecida. -->
+	<metric name="RequiredBusinessIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Business' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsBusiness=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="BusinessCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Business concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsBusiness=1) or (BusinessIF > 0) or (RequiredBusinessIF > 0)"/>
+	</metric>
+	
+	<metric name="BusinessLCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Business Concern.
+	</description>
+	<compoundmetric	condition="IsBusiness=1 or BusinessIF > 0 or RequiredBusinessIF > 0"/>
+	</metric>
+
+	<!-- END-Business -->
+	
+	<!-- Concurrency -->
+	
+	<metric name="IsConcurrency" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Concurrency.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Concurrency", and value 0 for interfaces that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Concurrency'" />
+	</metric>
+	
+	<metric name="IsConcurrency" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Concurrency.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Concurrency", and value 0 for interfaces that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Concurrency'" />
+	</metric>
+	
+	<metric name="IsConcurrency" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Concurrency.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Concurrency", and value 0 for dependencies that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Concurrency'" />
+	</metric>	
+	
+	<metric name="IsConcurrency" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Concurrency.
+		((p)) This metric has value 1 for components with stereotype
+		"Concurrency", and value 0 for components that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Concurrency'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="ConcurrencyOperations" domain="interface">
+	<description>
+		The set of operations assigned to Concurrency via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsConcurrency=1" />
+	</set>	
+	
+	<set name="ConcurrencyOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Concurrency via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsConcurrency=1) or (context.ConcurrencyInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalConcurrencyOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Concurrency.
+	</description>
+	<projection relation="context" target="interface" set="ConcurrencyOperations+ConcurrencyOperationsViaIF" />
+	</set>
+	
+	<metric name="ConcurrencyCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Concurrency concern.
+	</description>
+	<compoundmetric term="size(TotalConcurrencyOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="ConcurrencyInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Concurrency through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsConcurrency=1"/>
+	</metric>
+	
+	<metric name="ConcurrencyInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Concurrency through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsConcurrency=1"/>
+	</metric>
+	
+	<metric name="AUXConcurrencyCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Concurrency.
+	</description>
+	<compoundmetric	condition="(IsConcurrency=1) or (ConcurrencyInterfaceViaOP > 0) or (ConcurrencyInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXConcurrencyCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Concurrency.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsConcurrency=1) or (depclient.IsConcurrency=1))"/>
+	</metric>
+	
+	<metric name="ConcurrencyCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Concurrency concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXConcurrencyCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="ConcurrencyIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Concurrency' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsConcurrency=1) or (ConcurrencyInterfaceViaOP > 0) or (ConcurrencyInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredConcurrencyIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Concurrency' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsConcurrency=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="ConcurrencyCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Concurrency concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsConcurrency=1) or (ConcurrencyIF > 0) or (RequiredConcurrencyIF > 0)"/>
+	</metric>
+	
+	<metric name="ConcurrencyLCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Concurrency Concern.
+	</description>
+	<compoundmetric	condition="IsConcurrency=1 or ConcurrencyIF > 0 or RequiredConcurrencyIF > 0"/>
+	</metric>	
+	
+	<!-- END-Concurrency -->
+	
+	<!-- Distribution -->
+	
+	<metric name="IsDistribution" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Distribution.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Distribution", and value 0 for interfaces that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="IsDistribution" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Distribution.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Distribution", and value 0 for interfaces that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="IsDistribution" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Distribution.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Distribution", and value 0 for dependencies that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Distribution'" />
+	</metric>	
+	
+	<metric name="IsDistribution" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Distribution.
+		((p)) This metric has value 1 for components with stereotype
+		"Distribution", and value 0 for components that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="DistributionOperations" domain="interface">
+	<description>
+		The set of operations assigned to Distribution via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsDistribution=1" />
+	</set>	
+	
+	<set name="DistributionOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Distribution via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsDistribution=1) or (context.DistributionInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalDistributionOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Distribution.
+	</description>
+	<projection relation="context" target="interface" set="DistributionOperations+DistributionOperationsViaIF" />
+	</set>
+	
+	<metric name="DistributionCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Distribution concern.
+	</description>
+	<compoundmetric term="size(TotalDistributionOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="DistributionInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Distribution through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsDistribution=1"/>
+	</metric>
+	
+	<metric name="DistributionInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Distribution through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsDistribution=1"/>
+	</metric>
+	
+	<metric name="AUXDistributionCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Distribution.
+	</description>
+	<compoundmetric	condition="(IsDistribution=1) or (DistributionInterfaceViaOP > 0) or (DistributionInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXDistributionCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Distribution.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsDistribution=1) or (depclient.IsDistribution=1))"/>
+	</metric>
+	
+	<metric name="DistributionCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Distribution concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXDistributionCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="DistributionIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Distribution' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsDistribution=1) or (DistributionInterfaceViaOP > 0) or (DistributionInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredDistributionIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Distribution' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsDistribution=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="DistributionCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Distribution concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsDistribution=1) or (DistributionIF > 0) or (RequiredDistributionIF > 0)"/>
+	</metric>
+	
+	<metric name="DistributionLCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Distribution Concern.
+	</description>
+	<compoundmetric	condition="IsDistribution=1 or DistributionIF > 0 or RequiredDistributionIF > 0"/>
+	</metric>
+	
+	<!-- END-Distribution -->
+	
+	<!-- ExceptionHandling -->
+	
+	<metric name="IsExceptionHandling" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"ExceptionHandling", and value 0 for dependencies that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='ExceptionHandling'" />
+	</metric>	
+	
+	<metric name="IsExceptionHandling" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for components with stereotype
+		"ExceptionHandling", and value 0 for components that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="ExceptionHandlingOperations" domain="interface">
+	<description>
+		The set of operations assigned to ExceptionHandling via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsExceptionHandling=1" />
+	</set>	
+	
+	<set name="ExceptionHandlingOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to ExceptionHandling via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsExceptionHandling=1) or (context.ExceptionHandlingInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalExceptionHandlingOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to ExceptionHandling.
+	</description>
+	<projection relation="context" target="interface" set="ExceptionHandlingOperations+ExceptionHandlingOperationsViaIF" />
+	</set>
+	
+	<metric name="ExceptionHandlingCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of ExceptionHandling concern.
+	</description>
+	<compoundmetric term="size(TotalExceptionHandlingOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="ExceptionHandlingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to ExceptionHandling through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsExceptionHandling=1"/>
+	</metric>
+	
+	<metric name="ExceptionHandlingInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to ExceptionHandling through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsExceptionHandling=1"/>
+	</metric>
+	
+	<metric name="AUXExceptionHandlingCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to ExceptionHandling.
+	</description>
+	<compoundmetric	condition="(IsExceptionHandling=1) or (ExceptionHandlingInterfaceViaOP > 0) or (ExceptionHandlingInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXExceptionHandlingCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to ExceptionHandling.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsExceptionHandling=1) or (depclient.IsExceptionHandling=1))"/>
+	</metric>
+	
+	<metric name="ExceptionHandlingCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of ExceptionHandling concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXExceptionHandlingCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="ExceptionHandlingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'ExceptionHandling' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsExceptionHandling=1) or (ExceptionHandlingInterfaceViaOP > 0) or (ExceptionHandlingInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredExceptionHandlingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'ExceptionHandling' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsExceptionHandling=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="ExceptionHandlingCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of ExceptionHandling concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsExceptionHandling=1) or (ExceptionHandlingIF > 0) or (RequiredExceptionHandlingIF > 0)"/>
+	</metric>
+	
+	<metric name="ExceptionHandlingLCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to ExceptionHandling Concern.
+	</description>
+	<compoundmetric	condition="IsExceptionHandling=1 or ExceptionHandlingIF > 0 or RequiredExceptionHandlingIF > 0"/>
+	</metric>
+	
+	<!-- END-ExceptionHandling -->
+	
+	<!-- GUI -->
+	
+	<metric name="IsGUI" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to GUI.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"GUI", and value 0 for interfaces that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="IsGUI" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to GUI.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"GUI", and value 0 for interfaces that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="IsGUI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to GUI.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"GUI", and value 0 for dependencies that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='GUI'" />
+	</metric>	
+	
+	<metric name="IsGUI" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to GUI.
+		((p)) This metric has value 1 for components with stereotype
+		"GUI", and value 0 for components that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="GUIOperations" domain="interface">
+	<description>
+		The set of operations assigned to GUI via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsGUI=1" />
+	</set>	
+	
+	<set name="GUIOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to GUI via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsGUI=1) or (context.GUIInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalGUIOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to GUI.
+	</description>
+	<projection relation="context" target="interface" set="GUIOperations+GUIOperationsViaIF" />
+	</set>
+	
+	<metric name="GUICDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of GUI concern.
+	</description>
+	<compoundmetric term="size(TotalGUIOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="GUIInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to GUI through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsGUI=1"/>
+	</metric>
+	
+	<metric name="GUIInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to GUI through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsGUI=1"/>
+	</metric>
+	
+	<metric name="AUXGUICDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to GUI.
+	</description>
+	<compoundmetric	condition="(IsGUI=1) or (GUIInterfaceViaOP > 0) or (GUIInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXGUICDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to GUI.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsGUI=1) or (depclient.IsGUI=1))"/>
+	</metric>
+	
+	<metric name="GUICDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of GUI concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXGUICDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="GUIIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'GUI' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsGUI=1) or (GUIInterfaceViaOP > 0) or (GUIInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredGUIIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'GUI' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsGUI=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="GUICDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of GUI concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsGUI=1) or (GUIIF > 0) or (RequiredGUIIF > 0)"/>
+	</metric>
+	
+	<metric name="GUILCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to GUI Concern.
+	</description>
+	<compoundmetric	condition="IsGUI=1 or GUIIF > 0 or RequiredGUIIF > 0"/>
+	</metric>
+	
+	<!-- END-GUI -->
+	
+	<!-- Logging -->
+	
+	<metric name="IsLogging" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Logging.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Logging", and value 0 for interfaces that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="IsLogging" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Logging.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Logging", and value 0 for interfaces that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="IsLogging" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Logging.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Logging", and value 0 for dependencies that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Logging'" />
+	</metric>	
+	
+	<metric name="IsLogging" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Logging.
+		((p)) This metric has value 1 for components with stereotype
+		"Logging", and value 0 for components that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="LoggingOperations" domain="interface">
+	<description>
+		The set of operations assigned to Logging via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsLogging=1" />
+	</set>	
+	
+	<set name="LoggingOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Logging via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsLogging=1) or (context.LoggingInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalLoggingOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Logging.
+	</description>
+	<projection relation="context" target="interface" set="LoggingOperations+LoggingOperationsViaIF" />
+	</set>
+	
+	<metric name="LoggingCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Logging concern.
+	</description>
+	<compoundmetric term="size(TotalLoggingOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="LoggingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Logging through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsLogging=1"/>
+	</metric>
+	
+	<metric name="LoggingInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Logging through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsLogging=1"/>
+	</metric>
+	
+	<metric name="AUXLoggingCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Logging.
+	</description>
+	<compoundmetric	condition="(IsLogging=1) or (LoggingInterfaceViaOP > 0) or (LoggingInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXLoggingCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Logging.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsLogging=1) or (depclient.IsLogging=1))"/>
+	</metric>
+	
+	<metric name="LoggingCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Logging concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXLoggingCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="LoggingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Logging' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsLogging=1) or (LoggingInterfaceViaOP > 0) or (LoggingInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredLoggingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Logging' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsLogging=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="LoggingCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Logging concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsLogging=1) or (LoggingIF > 0) or (RequiredLoggingIF > 0)"/>
+	</metric>
+
+	<metric name="LoggingLCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Logging Concern.
+	</description>
+	<compoundmetric	condition="IsLogging=1 or LoggingIF > 0 or RequiredLoggingIF > 0"/>
+	</metric>
+	
+	<!-- END-Logging -->
+	
+	<!-- Persistence -->
+	
+	<metric name="IsPersistence" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Persistence.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Persistence", and value 0 for dependencies that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Persistence'" />
+	</metric>	
+	
+	<metric name="IsPersistence" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Persistence.
+		((p)) This metric has value 1 for components with stereotype
+		"Persistence", and value 0 for components that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="PersistenceOperations" domain="interface">
+	<description>
+		The set of operations assigned to Persistence via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsPersistence=1" />
+	</set>	
+	
+	<set name="PersistenceOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Persistence via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsPersistence=1) or (context.PersistenceInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalPersistenceOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Persistence.
+	</description>
+	<projection relation="context" target="interface" set="PersistenceOperations+PersistenceOperationsViaIF" />
+	</set>
+	
+	<metric name="PersistenceCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Persistence concern.
+	</description>
+	<compoundmetric term="size(TotalPersistenceOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="PersistenceInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Persistence through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsPersistence=1"/>
+	</metric>
+	
+	<metric name="PersistenceInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Persistence through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsPersistence=1"/>
+	</metric>
+	
+	<metric name="AUXPersistenceCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Persistence.
+	</description>
+	<compoundmetric	condition="(IsPersistence=1) or (PersistenceInterfaceViaOP > 0) or (PersistenceInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXPersistenceCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Persistence.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsPersistence=1) or (depclient.IsPersistence=1))"/>
+	</metric>
+	
+	<metric name="PersistenceCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Persistence concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXPersistenceCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="PersistenceIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Persistence' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsPersistence=1) or (PersistenceInterfaceViaOP > 0) or (PersistenceInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredPersistenceIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Persistence' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsPersistence=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="PersistenceCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Persistence concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1) or (PersistenceIF > 0) or (RequiredPersistenceIF > 0)"/>
+	</metric>
+	
+	<metric name="PersistenceLCC" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Persistence Concern.
+	</description>
+	<compoundmetric	condition="IsPersistence=1 or PersistenceIF > 0 or RequiredPersistenceIF > 0"/>
+	</metric>
+	
+	<!-- END-Persistence -->
+	
+<!-- LCC TOTAL -->
+
+	<metric name="LCC" domain="component" category="aspect">
+	<description>
+		It counts the number of concerns addressed by a given component.
+	</description>
+	<compoundmetric	term="BusinessLCC + ConcurrencyLCC + DistributionLCC + ExceptionHandlingLCC	+ GUILCC + LoggingLCC + PersistenceLCC"/>
+	</metric>
+	
+</sdmetrics>

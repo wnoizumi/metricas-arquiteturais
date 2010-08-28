@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+		
+<!-- Concern Difusion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- ExceptionHandling -->
+	
+	<metric name="IsExceptionHandling" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"ExceptionHandling", and value 0 for dependencies that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='ExceptionHandling'" />
+	</metric>	
+	
+	<metric name="IsExceptionHandling" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for components with stereotype
+		"ExceptionHandling", and value 0 for components that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="ExceptionHandlingOperations" domain="interface">
+	<description>
+		The set of operations assigned to ExceptionHandling via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsExceptionHandling=1" />
+	</set>	
+	
+	<set name="ExceptionHandlingOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to ExceptionHandling via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsExceptionHandling=1) or (context.ExceptionHandlingInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalExceptionHandlingOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to ExceptionHandling.
+	</description>
+	<projection relation="context" target="interface" set="ExceptionHandlingOperations+ExceptionHandlingOperationsViaIF" />
+	</set>
+	
+	<metric name="ExceptionHandlingCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of ExceptionHandling concern.
+	</description>
+	<compoundmetric term="size(TotalExceptionHandlingOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="ExceptionHandlingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to ExceptionHandling through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsExceptionHandling=1"/>
+	</metric>
+	
+	<metric name="ExceptionHandlingInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to ExceptionHandling through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsExceptionHandling=1"/>
+	</metric>
+	
+	<metric name="AUXExceptionHandlingCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to ExceptionHandling.
+	</description>
+	<compoundmetric	condition="(IsExceptionHandling=1) or (ExceptionHandlingInterfaceViaOP > 0) or (ExceptionHandlingInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXExceptionHandlingCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to ExceptionHandling.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsExceptionHandling=1) or (depclient.IsExceptionHandling=1))"/>
+	</metric>
+	
+	<metric name="ExceptionHandlingCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of ExceptionHandling concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXExceptionHandlingCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="ExceptionHandlingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'ExceptionHandling' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsExceptionHandling=1) or (ExceptionHandlingInterfaceViaOP > 0) or (ExceptionHandlingInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredExceptionHandlingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'ExceptionHandling' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsExceptionHandling=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="ExceptionHandlingCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of ExceptionHandling concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsExceptionHandling=1) or (ExceptionHandlingIF > 0) or (RequiredExceptionHandlingIF > 0)"/>
+	</metric>
+	
+	<metric name="ExceptionHandlingLCC" domain="component" category="aspect">
+	<description>
+		Indicates if the component is assigned to ExceptionHandling Concern.
+	</description>
+	<compoundmetric	condition="IsExceptionHandling=1 or ExceptionHandlingIF > 0 or RequiredExceptionHandlingIF > 0"/>
+	</metric>	
+	
+	</sdmetrics>

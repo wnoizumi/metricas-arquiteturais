@@ -1,0 +1,795 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<!--
+	 SDMetrics V2.0 metric definitions for the Gentleware Poseidon 4 metamodel
+
+	 Willian Nalepa Oizumi
+	 UEM - University of Maringa
+-->
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+		
+	<!-- Business -->	
+	
+	<metric name="IsBusiness" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Business.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Business", and value 0 for interfaces that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<metric name="IsBusiness" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Business.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Business", and value 0 for interfaces that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<metric name="IsBusiness" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Business.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Business", and value 0 for dependencies that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Business'" />
+	</metric>	
+	
+	<metric name="IsBusiness" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Business.
+		((p)) This metric has value 1 for components with stereotype
+		"Business", and value 0 for components that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<metric name="BusinessInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Business through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsBusiness=1"/>
+	</metric>
+
+	<metric name="BusinessComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Business' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsBusiness=1" />
+	</metric>
+	
+	<metric name="BusinessComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Business' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsBusiness=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="BusinessComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="BusinessInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Concurrency -->
+	
+		<metric name="IsConcurrency" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Concurrency.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Concurrency", and value 0 for interfaces that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Concurrency'" />
+	</metric>
+	
+	<metric name="IsConcurrency" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Concurrency.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Concurrency", and value 0 for interfaces that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Concurrency'" />
+	</metric>
+	
+	<metric name="IsConcurrency" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Concurrency.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Concurrency", and value 0 for dependencies that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Concurrency'" />
+	</metric>	
+	
+	<metric name="IsConcurrency" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Concurrency.
+		((p)) This metric has value 1 for components with stereotype
+		"Concurrency", and value 0 for components that do not have stereotype
+		"Concurrency".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Concurrency'" />
+	</metric>
+	
+	<metric name="ConcurrencyInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Concurrency through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsConcurrency=1"/>
+	</metric>
+
+	<metric name="ConcurrencyComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Concurrency' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsConcurrency=1" />
+	</metric>
+	
+	<metric name="ConcurrencyComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Concurrency' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsConcurrency=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="ConcurrencyComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="ConcurrencyInterfaceViaOP > 0" />
+	</metric>
+	
+	<!-- Distribution -->
+	
+	<metric name="IsDistribution" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Distribution.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Distribution", and value 0 for interfaces that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="IsDistribution" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Distribution.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Distribution", and value 0 for interfaces that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="IsDistribution" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Distribution.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Distribution", and value 0 for dependencies that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Distribution'" />
+	</metric>	
+	
+	<metric name="IsDistribution" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Distribution.
+		((p)) This metric has value 1 for components with stereotype
+		"Distribution", and value 0 for components that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="DistributionInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Distribution through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsDistribution=1"/>
+	</metric>
+
+	<metric name="DistributionComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Distribution' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsDistribution=1" />
+	</metric>
+	
+	<metric name="DistributionComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Distribution' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsDistribution=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="DistributionComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="DistributionInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- ExceptionHandling -->
+	
+	<metric name="IsExceptionHandling" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"ExceptionHandling", and value 0 for dependencies that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='ExceptionHandling'" />
+	</metric>	
+	
+	<metric name="IsExceptionHandling" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for components with stereotype
+		"ExceptionHandling", and value 0 for components that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="ExceptionHandlingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to ExceptionHandling through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsExceptionHandling=1"/>
+	</metric>
+
+	<metric name="ExceptionHandlingComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'ExceptionHandling' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsExceptionHandling=1" />
+	</metric>
+	
+	<metric name="ExceptionHandlingComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'ExceptionHandling' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsExceptionHandling=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="ExceptionHandlingComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="ExceptionHandlingInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- GUI -->
+	
+	<metric name="IsGUI" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to GUI.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"GUI", and value 0 for interfaces that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="IsGUI" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to GUI.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"GUI", and value 0 for interfaces that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="IsGUI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to GUI.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"GUI", and value 0 for dependencies that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='GUI'" />
+	</metric>	
+	
+	<metric name="IsGUI" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to GUI.
+		((p)) This metric has value 1 for components with stereotype
+		"GUI", and value 0 for components that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="GUIInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to GUI through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsGUI=1"/>
+	</metric>
+
+	<metric name="GUIComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'GUI' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsGUI=1" />
+	</metric>
+	
+	<metric name="GUIComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'GUI' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsGUI=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="GUIComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="GUIInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Logging -->
+	
+		<metric name="IsLogging" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Logging.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Logging", and value 0 for interfaces that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="IsLogging" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Logging.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Logging", and value 0 for interfaces that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="IsLogging" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Logging.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Logging", and value 0 for dependencies that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Logging'" />
+	</metric>	
+	
+	<metric name="IsLogging" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Logging.
+		((p)) This metric has value 1 for components with stereotype
+		"Logging", and value 0 for components that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="LoggingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Logging through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsLogging=1"/>
+	</metric>
+
+	<metric name="LoggingComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Logging' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsLogging=1" />
+	</metric>
+	
+	<metric name="LoggingComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Logging' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsLogging=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="LoggingComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="LoggingInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Persistence -->
+	
+	<metric name="IsPersistence" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Persistence.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Persistence", and value 0 for dependencies that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Persistence'" />
+	</metric>	
+	
+	<metric name="IsPersistence" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Persistence.
+		((p)) This metric has value 1 for components with stereotype
+		"Persistence", and value 0 for components that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="PersistenceInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Persistence through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsPersistence=1"/>
+	</metric>
+
+	<metric name="PersistenceComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Persistence' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsPersistence=1" />
+	</metric>
+	
+	<metric name="PersistenceComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Persistence' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsPersistence=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="PersistenceComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="PersistenceInterfaceViaOP > 0" />
+	</metric>
+	
+	<!-- Interaction Between Concerns - Persistence -->
+	
+	<!-- CIBC -->
+	
+	<metric name="CIBCPersistenceConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsConcurrency > 0) or (IsPersistence=1 and (ConcurrencyComponentViaPIF > 0 or ConcurrencyComponentViaRIF > 0))
+	or (IsPersistence=1 and ConcurrencyComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (ConcurrencyComponentViaPIF > 0 or ConcurrencyComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and ConcurrencyComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and ConcurrencyComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsDistribution > 0) or (IsPersistence=1 and (DistributionComponentViaPIF > 0 or DistributionComponentViaRIF > 0))
+	or (IsPersistence=1 and DistributionComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (DistributionComponentViaPIF > 0 or DistributionComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and DistributionComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and DistributionComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsExceptionHandling > 0) or (IsPersistence=1 and (ExceptionHandlingComponentViaPIF > 0 or ExceptionHandlingComponentViaRIF > 0))
+	or (IsPersistence=1 and ExceptionHandlingComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (ExceptionHandlingComponentViaPIF > 0 or ExceptionHandlingComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and ExceptionHandlingComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and ExceptionHandlingComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsGUI > 0) or (IsPersistence=1 and (GUIComponentViaPIF > 0 or GUIComponentViaRIF > 0))
+	or (IsPersistence=1 and GUIComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (GUIComponentViaPIF > 0 or GUIComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and GUIComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and GUIComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsLogging > 0) or (IsPersistence=1 and (LoggingComponentViaPIF > 0 or LoggingComponentViaRIF > 0))
+	or (IsPersistence=1 and LoggingComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (LoggingComponentViaPIF > 0 or LoggingComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and LoggingComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and LoggingComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsBusiness > 0) or (IsPersistence=1 and (BusinessComponentViaPIF > 0 or BusinessComponentViaRIF > 0))
+	or (IsPersistence=1 and BusinessComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (BusinessComponentViaPIF > 0 or BusinessComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and BusinessComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and BusinessComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceTotal" domain="model" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	term="CIBCPersistenceBusiness + CIBCPersistenceConcurrency + CIBCPersistenceDistribution + CIBCPersistenceExceptionHandling + CIBCPersistenceGUI + CIBCPersistenceLogging"/>
+	</metric>	
+	
+	<!-- IIBC -->
+	
+	<metric name="IIBCPersistenceConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsPersistence=1 and ConcurrencyInterfaceViaOP > 0) 
+	or (PersistenceInterfaceViaOP > 0 and ConcurrencyInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCPersistenceDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsPersistence=1 and DistributionInterfaceViaOP > 0) 
+	or (PersistenceInterfaceViaOP > 0 and DistributionInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCPersistenceExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsPersistence=1 and ExceptionHandlingInterfaceViaOP > 0) 
+	or (PersistenceInterfaceViaOP > 0 and ExceptionHandlingInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCPersistenceGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsPersistence=1 and GUIInterfaceViaOP > 0) 
+	or (PersistenceInterfaceViaOP > 0 and GUIInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCPersistenceLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsPersistence=1 and LoggingInterfaceViaOP > 0) 
+	or (PersistenceInterfaceViaOP > 0 and LoggingInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCPersistenceBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsPersistence=1 and BusinessInterfaceViaOP > 0) 
+	or (PersistenceInterfaceViaOP > 0 and BusinessInterfaceViaOP > 0)"/>
+	</metric>	
+	
+	<metric name="IIBCPersistenceTotal" domain="model" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	term="IIBCPersistenceBusiness + IIBCPersistenceConcurrency + IIBCPersistenceDistribution + IIBCPersistenceExceptionHandling + IIBCPersistenceGUI + IIBCPersistenceLogging"/>
+	</metric>
+	
+		<!-- OOBC -->
+	
+	<metric name="OOBCPC" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsPersistence=1) and (IsConcurrency=1)"/>
+	</metric>
+	
+	<metric name="OOBCPD" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsPersistence=1) and (IsDistribution=1)"/>
+	</metric>
+	
+	<metric name="OOBCPE" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsPersistence=1) and (IsExceptionHandling=1)"/>
+	</metric>	
+	
+	<metric name="OOBCPB" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsPersistence=1) and (IsBusiness=1)"/>
+	</metric>
+	
+	<metric name="OOBCPG" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsPersistence=1) and (IsGUI=1)"/>
+	</metric>	
+	
+	<metric name="OOBCPL" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsPersistence=1) and (IsLogging=1)"/>
+	</metric>		
+	
+	<metric name="OOBCPCTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCPC > 0"/>
+	</metric>
+	
+	<metric name="OOBCPDTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCPD > 0"/>
+	</metric>
+	
+	<metric name="OOBCPETotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCPE > 0"/>
+	</metric>
+	
+	<metric name="OOBCPBTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCPB > 0"/>
+	</metric>
+	
+	<metric name="OOBCPGTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCPG > 0"/>
+	</metric>	
+	
+	<metric name="OOBCPLTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCPL > 0"/>
+	</metric>		
+	
+	<metric name="OOBCPersistenceConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="OOBCPCTotal > 0"/>
+	</metric>
+	
+	<metric name="OOBCPersistenceDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCPDTotal > 0"/>
+	</metric>
+	
+	<metric name="OOBCPersistenceExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCPETotal > 0"/>
+	</metric>	
+	
+	<metric name="OOBCPersistenceBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCPBTotal > 0"/>
+	</metric>
+	
+	<metric name="OOBCPersistenceGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="OOBCPGTotal > 0"/>
+	</metric>	
+	
+	<metric name="OOBCPersistenceLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCPLTotal > 0"/>
+	</metric>	
+	
+	<metric name="OOBCPersistenceTotal" domain="model" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	term="(OOBCPersistenceBusiness + OOBCPersistenceConcurrency + OOBCPersistenceDistribution + OOBCPersistenceExceptionHandling + OOBCPersistenceGUI + OOBCPersistenceLogging)"/>
+	</metric>
+	
+</sdmetrics>

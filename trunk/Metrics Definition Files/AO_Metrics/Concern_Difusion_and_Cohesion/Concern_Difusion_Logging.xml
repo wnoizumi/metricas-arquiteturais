@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+		
+<!-- Concern Difusion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- Logging -->
+	
+	<metric name="IsLogging" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Logging.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Logging", and value 0 for interfaces that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="IsLogging" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Logging.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Logging", and value 0 for interfaces that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<metric name="IsLogging" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Logging.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Logging", and value 0 for dependencies that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Logging'" />
+	</metric>	
+	
+	<metric name="IsLogging" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Logging.
+		((p)) This metric has value 1 for components with stereotype
+		"Logging", and value 0 for components that do not have stereotype
+		"Logging".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Logging'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="LoggingOperations" domain="interface">
+	<description>
+		The set of operations assigned to Logging via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsLogging=1" />
+	</set>	
+	
+	<set name="LoggingOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Logging via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsLogging=1) or (context.LoggingInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalLoggingOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Logging.
+	</description>
+	<projection relation="context" target="interface" set="LoggingOperations+LoggingOperationsViaIF" />
+	</set>
+	
+	<metric name="LoggingCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Logging concern.
+	</description>
+	<compoundmetric term="size(TotalLoggingOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="LoggingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Logging through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsLogging=1"/>
+	</metric>
+	
+	<metric name="LoggingInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Logging through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsLogging=1"/>
+	</metric>
+	
+	<metric name="AUXLoggingCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Logging.
+	</description>
+	<compoundmetric	condition="(IsLogging=1) or (LoggingInterfaceViaOP > 0) or (LoggingInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXLoggingCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Logging.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsLogging=1) or (depclient.IsLogging=1))"/>
+	</metric>
+	
+	<metric name="LoggingCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Logging concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXLoggingCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="LoggingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Logging' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsLogging=1) or (LoggingInterfaceViaOP > 0) or (LoggingInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredLoggingIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Logging' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsLogging=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="LoggingCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Logging concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsLogging=1) or (LoggingIF > 0) or (RequiredLoggingIF > 0)"/>
+	</metric>
+
+	<metric name="LoggingLCC" domain="component" category="aspect">
+	<description>
+		Indicates if the component is assigned to Logging Concern.
+	</description>
+	<compoundmetric	condition="IsLogging=1 or LoggingIF > 0 or RequiredLoggingIF > 0"/>
+	</metric>	
+	
+</sdmetrics>

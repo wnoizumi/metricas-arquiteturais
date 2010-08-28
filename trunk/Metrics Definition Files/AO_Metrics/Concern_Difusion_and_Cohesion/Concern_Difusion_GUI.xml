@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+		
+<!-- Concern Difusion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- GUI -->
+	
+	<metric name="IsGUI" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to GUI.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"GUI", and value 0 for interfaces that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="IsGUI" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to GUI.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"GUI", and value 0 for interfaces that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<metric name="IsGUI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to GUI.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"GUI", and value 0 for dependencies that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='GUI'" />
+	</metric>	
+	
+	<metric name="IsGUI" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to GUI.
+		((p)) This metric has value 1 for components with stereotype
+		"GUI", and value 0 for components that do not have stereotype
+		"GUI".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='GUI'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="GUIOperations" domain="interface">
+	<description>
+		The set of operations assigned to GUI via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsGUI=1" />
+	</set>	
+	
+	<set name="GUIOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to GUI via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsGUI=1) or (context.GUIInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalGUIOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to GUI.
+	</description>
+	<projection relation="context" target="interface" set="GUIOperations+GUIOperationsViaIF" />
+	</set>
+	
+	<metric name="GUICDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of GUI concern.
+	</description>
+	<compoundmetric term="size(TotalGUIOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="GUIInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to GUI through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsGUI=1"/>
+	</metric>
+	
+	<metric name="GUIInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to GUI through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsGUI=1"/>
+	</metric>
+	
+	<metric name="AUXGUICDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to GUI.
+	</description>
+	<compoundmetric	condition="(IsGUI=1) or (GUIInterfaceViaOP > 0) or (GUIInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXGUICDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to GUI.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsGUI=1) or (depclient.IsGUI=1))"/>
+	</metric>
+	
+	<metric name="GUICDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of GUI concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXGUICDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="GUIIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'GUI' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsGUI=1) or (GUIInterfaceViaOP > 0) or (GUIInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredGUIIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'GUI' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsGUI=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="GUICDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of GUI concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsGUI=1) or (GUIIF > 0) or (RequiredGUIIF > 0)"/>
+	</metric>
+	
+	<metric name="GUILCC" domain="component" category="aspect">
+	<description>
+		Indicates if the component is assigned to GUI Concern.
+	</description>
+	<compoundmetric	condition="IsGUI=1 or GUIIF > 0 or RequiredGUIIF > 0"/>
+	</metric>	
+	
+	</sdmetrics>
