@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+		
+<!-- Concern Difusion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- Persistence -->
+	
+	<metric name="IsPersistence" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Persistence.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Persistence", and value 0 for dependencies that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Persistence'" />
+	</metric>	
+	
+	<metric name="IsPersistence" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Persistence.
+		((p)) This metric has value 1 for components with stereotype
+		"Persistence", and value 0 for components that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="PersistenceOperations" domain="interface">
+	<description>
+		The set of operations assigned to Persistence via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsPersistence=1" />
+	</set>	
+	
+	<set name="PersistenceOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Persistence via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsPersistence=1) or (context.PersistenceInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalPersistenceOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Persistence.
+	</description>
+	<projection relation="context" target="interface" set="PersistenceOperations+PersistenceOperationsViaIF" />
+	</set>
+	
+	<metric name="PersistenceCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Persistence concern.
+	</description>
+	<compoundmetric term="size(TotalPersistenceOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="PersistenceInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Persistence through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsPersistence=1"/>
+	</metric>
+	
+	<metric name="PersistenceInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Persistence through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsPersistence=1"/>
+	</metric>
+	
+	<metric name="AUXPersistenceCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Persistence.
+	</description>
+	<compoundmetric	condition="(IsPersistence=1) or (PersistenceInterfaceViaOP > 0) or (PersistenceInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXPersistenceCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Persistence.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsPersistence=1) or (depclient.IsPersistence=1))"/>
+	</metric>
+	
+	<metric name="PersistenceCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Persistence concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXPersistenceCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="PersistenceIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Persistence' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsPersistence=1) or (PersistenceInterfaceViaOP > 0) or (PersistenceInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredPersistenceIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Persistence' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsPersistence=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="PersistenceCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Persistence concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1) or (PersistenceIF > 0) or (RequiredPersistenceIF > 0)"/>
+	</metric>
+	
+	<metric name="PersistenceLCC" domain="component" category="aspect">
+	<description>
+		Indicates if the component is assigned to Persistence Concern.
+	</description>
+	<compoundmetric	condition="IsPersistence=1 or PersistenceIF > 0 or RequiredPersistenceIF > 0"/>
+	</metric>	
+	
+</sdmetrics>

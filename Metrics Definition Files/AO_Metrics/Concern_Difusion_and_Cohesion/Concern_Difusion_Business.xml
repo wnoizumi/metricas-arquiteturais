@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+		
+<!-- Concern Difusion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- Business -->
+	
+	<metric name="IsBusiness" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Business.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Business", and value 0 for interfaces that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<metric name="IsBusiness" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Business.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Business", and value 0 for interfaces that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<metric name="IsBusiness" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Business.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Business", and value 0 for dependencies that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Business'" />
+	</metric>	
+	
+	<metric name="IsBusiness" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Business.
+		((p)) This metric has value 1 for components with stereotype
+		"Business", and value 0 for components that do not have stereotype
+		"Business".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Business'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="BusinessOperations" domain="interface">
+	<description>
+		The set of operations assigned to Business via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsBusiness=1" />
+	</set>	
+	
+	<set name="BusinessOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Business via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsBusiness=1) or (context.BusinessInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalBusinessOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Business.
+	</description>
+	<projection relation="context" target="interface" set="BusinessOperations+BusinessOperationsViaIF" />
+	</set>
+	
+	<metric name="BusinessCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Business concern.
+	</description>
+	<compoundmetric term="size(TotalBusinessOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="BusinessInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Business through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsBusiness=1"/>
+	</metric>
+	
+	<metric name="BusinessInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Business through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsBusiness=1"/>
+	</metric>
+	
+	<metric name="AUXBusinessCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Business.
+	</description>
+	<compoundmetric	condition="(IsBusiness=1) or (BusinessInterfaceViaOP > 0) or (BusinessInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXBusinessCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Business.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsBusiness=1) or (depclient.IsBusiness=1))"/>
+	</metric>
+	
+	<metric name="BusinessCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Business concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXBusinessCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="BusinessIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Business' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsBusiness=1) or (BusinessInterfaceViaOP > 0) or (BusinessInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredBusinessIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Business' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsBusiness=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="BusinessCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Business concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsBusiness=1) or (BusinessIF > 0) or (RequiredBusinessIF > 0)"/>
+	</metric>
+	
+	<metric name="BusinessLCC" domain="component" category="aspect">
+	<description>
+		Indicates if the component is assigned to Business Concern.
+	</description>
+	<compoundmetric	condition="IsBusiness=1 or BusinessIF > 0 or RequiredBusinessIF > 0"/>
+	</metric>
+	
+	</sdmetrics>

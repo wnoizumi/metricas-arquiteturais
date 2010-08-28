@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+		
+<!-- Concern Difusion -->
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+
+<!-- Distribution -->
+	
+	<metric name="IsDistribution" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Distribution.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Distribution", and value 0 for interfaces that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="IsDistribution" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Distribution.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Distribution", and value 0 for interfaces that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<metric name="IsDistribution" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Distribution.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Distribution", and value 0 for dependencies that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Distribution'" />
+	</metric>	
+	
+	<metric name="IsDistribution" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Distribution.
+		((p)) This metric has value 1 for components with stereotype
+		"Distribution", and value 0 for components that do not have stereotype
+		"Distribution".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Distribution'" />
+	</metric>
+	
+	<!-- CDAO -->	
+	
+	<set name="DistributionOperations" domain="interface">
+	<description>
+		The set of operations assigned to Distribution via operation concern.
+	</description>
+	<projection relation="context" target="operation" condition="IsDistribution=1" />
+	</set>	
+	
+	<set name="DistributionOperationsViaIF" domain="interface">
+	<description>
+		The set of operations assigned to Distribution via interface concern.
+	</description>
+	<projection relation="context" target="operation" condition="(context.IsDistribution=1) or (context.DistributionInterfaceViaCP > 0)"/>
+	</set>
+	
+	<set name="TotalDistributionOperations" domain="model" multiset="false">
+	<description>
+		The set of operations assigned to Distribution.
+	</description>
+	<projection relation="context" target="interface" set="DistributionOperations+DistributionOperationsViaIF" />
+	</set>
+	
+	<metric name="DistributionCDAO" domain="model" category="aspect">
+	<description>
+		It counts the number of operations which contributes
+		to the realization of Distribution concern.
+	</description>
+	<compoundmetric term="size(TotalDistributionOperations)"/>
+	</metric>
+	
+	<!-- CDAI -->	
+	
+	<metric name="DistributionInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Distribution through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsDistribution=1"/>
+	</metric>
+	
+	<metric name="DistributionInterfaceViaCP" domain="interface" internal="true" category="aspect"> 
+	<description>
+		Indicates if the interface is assigned to Distribution through some component.
+	</description>	
+	<projection relation="abssupplier" target="abstraction" element="absclient" condition="IsDistribution=1"/>
+	</metric>
+	
+	<metric name="AUXDistributionCDAI" domain="interface" internal="true" category="aspect">
+	<description>
+		Total number of provided interfaces assigned to Distribution.
+	</description>
+	<compoundmetric	condition="(IsDistribution=1) or (DistributionInterfaceViaOP > 0) or (DistributionInterfaceViaCP > 0)"/>
+	</metric>
+	
+	<metric name="AUXDistributionCDAI" domain="dependency" internal="true" category="aspect">
+	<description>
+		Total number of dependencies (required interfaces) assigned to Distribution.
+	</description>
+	<compoundmetric	condition="(IsRequiredInterface=1) and ((IsDistribution=1) or (depclient.IsDistribution=1))"/>
+	</metric>
+	
+	<metric name="DistributionCDAI" domain="model" category="aspect">
+	<description>
+		It counts the number of interfaces which contributes
+		to the realization of Distribution concern.
+	</description>
+	<projection relation="context" target="interface|dependency" condition="AUXDistributionCDAI=1"/>
+	</metric>
+	
+	<!-- CDAC -->
+	<metric name="DistributionIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of provided interfaces linked via a 'Distribution' dependency.
+	</description>
+	<projection relation="absclient" target="abstraction" element="abssupplier"
+	condition="(IsDistribution=1) or (DistributionInterfaceViaOP > 0) or (DistributionInterfaceViaCP > 0)" />
+	</metric>
+
+	<metric name="RequiredDistributionIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Distribution' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsDistribution=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>	
+	
+	<metric name="DistributionCDAC" domain="model" category="aspect">
+	<description>
+		It counts the number of components which contributes
+		to the realization of Distribution concern.
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsDistribution=1) or (DistributionIF > 0) or (RequiredDistributionIF > 0)"/>
+	</metric>
+	
+	<metric name="DistributionLCC" domain="component" category="aspect">
+	<description>
+		Indicates if the component is assigned to Distribution Concern.
+	</description>
+	<compoundmetric	condition="IsDistribution=1 or DistributionIF > 0 or RequiredDistributionIF > 0"/>
+	</metric>	
+	
+	</sdmetrics>
