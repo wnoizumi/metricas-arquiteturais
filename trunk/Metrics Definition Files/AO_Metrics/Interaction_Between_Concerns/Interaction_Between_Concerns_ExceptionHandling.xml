@@ -536,7 +536,7 @@
 	
 	<!-- CIBC -->
 	
-	<metric name="CIBCExceptionHandlingBusiness" domain="model" internal="true" category="aspect">
+	<metric name="CIBCExceptionHandlingBusinessTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -547,7 +547,7 @@
 	or (ExceptionHandlingComponentViaOP > 0 and BusinessComponentViaOP > 0)"/>
 	</metric>	
 	
-	<metric name="CIBCExceptionHandlingConcurrency" domain="model" internal="true" category="aspect">
+	<metric name="CIBCExceptionHandlingConcurrencyTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -558,7 +558,7 @@
 	or (ExceptionHandlingComponentViaOP > 0 and ConcurrencyComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCExceptionHandlingDistribution" domain="model" internal="true" category="aspect">
+	<metric name="CIBCExceptionHandlingDistributionTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -569,7 +569,7 @@
 	or (ExceptionHandlingComponentViaOP > 0 and DistributionComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCExceptionHandlingGUI" domain="model" internal="true" category="aspect">
+	<metric name="CIBCExceptionHandlingGUITotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -580,7 +580,7 @@
 	or (ExceptionHandlingComponentViaOP > 0 and GUIComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCExceptionHandlingLogging" domain="model" internal="true" category="aspect">
+	<metric name="CIBCExceptionHandlingLoggingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -591,7 +591,7 @@
 	or (ExceptionHandlingComponentViaOP > 0 and LoggingComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCExceptionHandlingPersistence" domain="model" internal="true" category="aspect">
+	<metric name="CIBCExceptionHandlingPersistenceTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -600,6 +600,42 @@
 	or ((ExceptionHandlingComponentViaPIF > 0 or ExceptionHandlingComponentViaRIF > 0) and (PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0))
 	or ((ExceptionHandlingComponentViaPIF > 0 or ExceptionHandlingComponentViaRIF > 0) and PersistenceComponentViaOP > 0) 
 	or (ExceptionHandlingComponentViaOP > 0 and PersistenceComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCExceptionHandlingBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCExceptionHandlingBusinessTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCExceptionHandlingConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCExceptionHandlingConcurrencyTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCExceptionHandlingDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCExceptionHandlingDistributionTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCExceptionHandlingGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCExceptionHandlingGUITotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCExceptionHandlingLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCExceptionHandlingLoggingTotal > 0"/>
+	</metric>	
+
+	<metric name="CIBCExceptionHandlingPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCExceptionHandlingPersistenceTotal > 0"/>
 	</metric>
 	
 	<metric name="CIBCExceptionHandlingTotal" domain="model" category="aspect">

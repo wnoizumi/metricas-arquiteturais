@@ -536,7 +536,7 @@
 	
 	<!-- CIBC -->
 	
-	<metric name="CIBCDistributionBusiness" domain="model" internal="true" category="aspect">
+	<metric name="CIBCDistributionBusinessTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -547,7 +547,7 @@
 	or (DistributionComponentViaOP > 0 and BusinessComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCDistributionConcurrency" domain="model" internal="true" category="aspect">
+	<metric name="CIBCDistributionConcurrencyTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -558,7 +558,7 @@
 	or (DistributionComponentViaOP > 0 and ConcurrencyComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCDistributionExceptionHandling" domain="model" internal="true" category="aspect">
+	<metric name="CIBCDistributionExceptionHandlingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -569,7 +569,7 @@
 	or (DistributionComponentViaOP > 0 and ExceptionHandlingComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCDistributionGUI" domain="model" internal="true" category="aspect">
+	<metric name="CIBCDistributionGUITotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -580,7 +580,7 @@
 	or (DistributionComponentViaOP > 0 and GUIComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCDistributionLogging" domain="model" internal="true" category="aspect">
+	<metric name="CIBCDistributionLoggingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -591,7 +591,7 @@
 	or (DistributionComponentViaOP > 0 and LoggingComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCDistributionPersistence" domain="model" internal="true" category="aspect">
+	<metric name="CIBCDistributionPersistenceTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -601,6 +601,42 @@
 	or ((DistributionComponentViaPIF > 0 or DistributionComponentViaRIF > 0) and PersistenceComponentViaOP > 0) 
 	or (DistributionComponentViaOP > 0 and PersistenceComponentViaOP > 0)"/>
 	</metric>
+	
+	<metric name="CIBCDistributionBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCDistributionBusinessTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCDistributionConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCDistributionConcurrencyTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCDistributionExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCDistributionExceptionHandlingTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCDistributionGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCDistributionGUITotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCDistributionLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCDistributionLoggingTotal > 0"/>
+	</metric>	
+
+	<metric name="CIBCDistributionPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCDistributionPersistenceTotal > 0"/>
+	</metric>		
 	
 	<metric name="CIBCDistributionTotal" domain="model" category="aspect">
 	<description>

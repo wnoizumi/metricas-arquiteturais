@@ -536,7 +536,18 @@
 	
 	<!-- CIBC -->
 	
-	<metric name="CIBCPersistenceConcurrency" domain="model" internal="true" category="aspect">
+	<metric name="CIBCPersistenceBusinessTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsPersistence=1 and IsBusiness > 0) or (IsPersistence=1 and (BusinessComponentViaPIF > 0 or BusinessComponentViaRIF > 0))
+	or (IsPersistence=1 and BusinessComponentViaOP > 0) 
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (BusinessComponentViaPIF > 0 or BusinessComponentViaRIF > 0))
+	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and BusinessComponentViaOP > 0) 
+	or (PersistenceComponentViaOP > 0 and BusinessComponentViaOP > 0)"/>
+	</metric>	
+	
+	<metric name="CIBCPersistenceConcurrencyTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -547,7 +558,7 @@
 	or (PersistenceComponentViaOP > 0 and ConcurrencyComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCPersistenceDistribution" domain="model" internal="true" category="aspect">
+	<metric name="CIBCPersistenceDistributionTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -558,7 +569,7 @@
 	or (PersistenceComponentViaOP > 0 and DistributionComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCPersistenceExceptionHandling" domain="model" internal="true" category="aspect">
+	<metric name="CIBCPersistenceExceptionHandlingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -569,7 +580,7 @@
 	or (PersistenceComponentViaOP > 0 and ExceptionHandlingComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCPersistenceGUI" domain="model" internal="true" category="aspect">
+	<metric name="CIBCPersistenceGUITotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -580,7 +591,7 @@
 	or (PersistenceComponentViaOP > 0 and GUIComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCPersistenceLogging" domain="model" internal="true" category="aspect">
+	<metric name="CIBCPersistenceLoggingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -594,13 +605,38 @@
 	<metric name="CIBCPersistenceBusiness" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
-	<projection relation="context" target="component"
-	condition="(IsPersistence=1 and IsBusiness > 0) or (IsPersistence=1 and (BusinessComponentViaPIF > 0 or BusinessComponentViaRIF > 0))
-	or (IsPersistence=1 and BusinessComponentViaOP > 0) 
-	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and (BusinessComponentViaPIF > 0 or BusinessComponentViaRIF > 0))
-	or ((PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0) and BusinessComponentViaOP > 0) 
-	or (PersistenceComponentViaOP > 0 and BusinessComponentViaOP > 0)"/>
+	<compoundmetric	condition="CIBCPersistenceBusinessTotal > 0"/>
 	</metric>
+	
+	<metric name="CIBCPersistenceConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCPersistenceConcurrencyTotal > 0"/>
+	</metric>
+
+	<metric name="CIBCPersistenceDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCPersistenceDistributionTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCPersistenceExceptionHandlingTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCPersistenceGUITotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCPersistenceLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCPersistenceLoggingTotal > 0"/>
+	</metric>	
 	
 	<metric name="CIBCPersistenceTotal" domain="model" category="aspect">
 	<description>
