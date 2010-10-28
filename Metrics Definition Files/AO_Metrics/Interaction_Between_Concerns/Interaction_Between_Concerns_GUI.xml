@@ -536,7 +536,7 @@
 	
 	<!-- CIBC -->
 	
-	<metric name="CIBCGUIBusiness" domain="model" internal="true" category="aspect">
+	<metric name="CIBCGUIBusinessTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -547,7 +547,7 @@
 	or (GUIComponentViaOP > 0 and BusinessComponentViaOP > 0)"/>
 	</metric>	
 	
-	<metric name="CIBCGUIConcurrency" domain="model" internal="true" category="aspect">
+	<metric name="CIBCGUIConcurrencyTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -558,7 +558,7 @@
 	or (GUIComponentViaOP > 0 and ConcurrencyComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCGUIDistribution" domain="model" internal="true" category="aspect">
+	<metric name="CIBCGUIDistributionTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -569,7 +569,7 @@
 	or (GUIComponentViaOP > 0 and DistributionComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCGUIExceptionHandling" domain="model" internal="true" category="aspect">
+	<metric name="CIBCGUIExceptionHandlingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -580,7 +580,7 @@
 	or (GUIComponentViaOP > 0 and ExceptionHandlingComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCGUILogging" domain="model" internal="true" category="aspect">
+	<metric name="CIBCGUILoggingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -591,7 +591,7 @@
 	or (GUIComponentViaOP > 0 and LoggingComponentViaOP > 0)"/>
 	</metric>
 	
-	<metric name="CIBCGUIPersistence" domain="model" internal="true" category="aspect">
+	<metric name="CIBCGUIPersistenceTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="component"
@@ -601,6 +601,42 @@
 	or ((GUIComponentViaPIF > 0 or GUIComponentViaRIF > 0) and PersistenceComponentViaOP > 0) 
 	or (GUIComponentViaOP > 0 and PersistenceComponentViaOP > 0)"/>
 	</metric>
+	
+	<metric name="CIBCGUIBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCGUIBusinessTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCGUIConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCGUIConcurrencyTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCGUIExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCGUIExceptionHandlingTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCGUIDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCGUIDistributionTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCGUILogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCGUILoggingTotal > 0"/>
+	</metric>	
+
+	<metric name="CIBCGUIPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCGUIPersistenceTotal > 0"/>
+	</metric>		
 	
 	<metric name="CIBCGUITotal" domain="model" category="aspect">
 	<description>
