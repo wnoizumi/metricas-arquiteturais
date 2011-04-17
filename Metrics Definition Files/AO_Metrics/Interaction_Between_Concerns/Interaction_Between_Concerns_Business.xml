@@ -646,7 +646,7 @@
 	
 	<!-- IIBC -->
 	
-	<metric name="IIBCBusinessConcurrency" domain="model" internal="true" category="aspect">
+	<metric name="IIBCBusinessConcurrencyTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -654,7 +654,7 @@
 	or (BusinessInterfaceViaOP > 0 and ConcurrencyInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCBusinessDistribution" domain="model" internal="true" category="aspect">
+	<metric name="IIBCBusinessDistributionTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -662,7 +662,7 @@
 	or (BusinessInterfaceViaOP > 0 and DistributionInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCBusinessExceptionHandling" domain="model" internal="true" category="aspect">
+	<metric name="IIBCBusinessExceptionHandlingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -670,7 +670,7 @@
 	or (BusinessInterfaceViaOP > 0 and ExceptionHandlingInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCBusinessGUI" domain="model" internal="true" category="aspect">
+	<metric name="IIBCBusinessGUITotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -678,7 +678,7 @@
 	or (BusinessInterfaceViaOP > 0 and GUIInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCBusinessLogging" domain="model" internal="true" category="aspect">
+	<metric name="IIBCBusinessLoggingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -686,12 +686,48 @@
 	or (BusinessInterfaceViaOP > 0 and LoggingInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCBusinessPersistence" domain="model" internal="true" category="aspect">
+	<metric name="IIBCBusinessPersistenceTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
 	condition="(IsBusiness=1 and PersistenceInterfaceViaOP > 0) 
 	or (BusinessInterfaceViaOP > 0 and PersistenceInterfaceViaOP > 0)"/>
+	</metric>
+
+	<metric name="IIBCBusinessConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCBusinessConcurrencyTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCBusinessDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCBusinessDistributionTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCBusinessExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCBusinessExceptionHandlingTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCBusinessGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCBusinessGUITotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCBusinessLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCBusinessLoggingTotal > 0"/>
+	</metric>	
+
+	<metric name="IIBCBusinessPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCBusinessPersistenceTotal > 0"/>
 	</metric>	
 	
 	<metric name="IIBCBusinessTotal" domain="model" category="aspect">

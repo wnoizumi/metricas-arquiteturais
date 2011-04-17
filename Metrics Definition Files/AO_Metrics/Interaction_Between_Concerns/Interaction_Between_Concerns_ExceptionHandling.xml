@@ -646,7 +646,7 @@
 	
 	<!-- IIBC -->
 	
-	<metric name="IIBCExceptionHandlingBusiness" domain="model" internal="true" category="aspect">
+	<metric name="IIBCExceptionHandlingBusinessTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -654,7 +654,7 @@
 	or (ExceptionHandlingInterfaceViaOP > 0 and BusinessInterfaceViaOP > 0)"/>
 	</metric>	
 	
-	<metric name="IIBCExceptionHandlingConcurrency" domain="model" internal="true" category="aspect">
+	<metric name="IIBCExceptionHandlingConcurrencyTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -662,7 +662,7 @@
 	or (ExceptionHandlingInterfaceViaOP > 0 and ConcurrencyInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCExceptionHandlingDistribution" domain="model" internal="true" category="aspect">
+	<metric name="IIBCExceptionHandlingDistributionTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -670,7 +670,7 @@
 	or (ExceptionHandlingInterfaceViaOP > 0 and DistributionInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCExceptionHandlingGUI" domain="model" internal="true" category="aspect">
+	<metric name="IIBCExceptionHandlingGUITotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -678,7 +678,7 @@
 	or (ExceptionHandlingInterfaceViaOP > 0 and GUIInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCExceptionHandlingLogging" domain="model" internal="true" category="aspect">
+	<metric name="IIBCExceptionHandlingLoggingTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
@@ -686,13 +686,49 @@
 	or (ExceptionHandlingInterfaceViaOP > 0 and LoggingInterfaceViaOP > 0)"/>
 	</metric>
 	
-	<metric name="IIBCExceptionHandlingPersistence" domain="model" internal="true" category="aspect">
+	<metric name="IIBCExceptionHandlingPersistenceTotal" domain="model" internal="true" category="aspect">
 	<description>
 	</description>
 	<projection relation="context" target="interface"
 	condition="(IsExceptionHandling=1 and PersistenceInterfaceViaOP > 0) 
 	or (ExceptionHandlingInterfaceViaOP > 0 and PersistenceInterfaceViaOP > 0)"/>
 	</metric>	
+	
+	<metric name="IIBCExceptionHandlingBusiness" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCExceptionHandlingBusinessTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCExceptionHandlingConcurrency" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCExceptionHandlingConcurrencyTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCExceptionHandlingDistribution" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCExceptionHandlingDistributionTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCExceptionHandlingGUI" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCExceptionHandlingGUITotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCExceptionHandlingLogging" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCExceptionHandlingLoggingTotal > 0"/>
+	</metric>	
+
+	<metric name="IIBCExceptionHandlingPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCExceptionHandlingPersistenceTotal > 0"/>
+	</metric>
 	
 	<metric name="IIBCExceptionHandlingTotal" domain="model" category="aspect">
 	<description>
