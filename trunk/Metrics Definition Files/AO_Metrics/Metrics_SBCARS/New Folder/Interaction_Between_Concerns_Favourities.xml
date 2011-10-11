@@ -1,0 +1,743 @@
+<?xml version="1.0"?>
+<!DOCTYPE sdmetrics SYSTEM 'metrics.dtd'>
+
+<!--
+	 SDMetrics V2.0 metric definitions for the Gentleware Poseidon 4 metamodel
+
+	 Willian Nalepa Oizumi
+	 UEM - University of Maringa
+-->
+
+<sdmetrics version="2.0" ruleexemption="taggedvalue"
+	exemptiontag="tagname">
+	
+	<metric name='IsRequiredInterface' domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency is a required interface.
+		((p)) This metric has value 1 for dependencies with stereotype	
+		"use", and value 0 for dependencies that do not have stereotype
+		"use".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='use'" />
+	</metric>
+		
+	<!-- Controller -->	
+	
+	<metric name="IsController" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Controller.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Controller", and value 0 for interfaces that do not have stereotype
+		"Controller".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Controller'" />
+	</metric>
+	
+	<metric name="IsController" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Controller.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Controller", and value 0 for interfaces that do not have stereotype
+		"Controller".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Controller'" />
+	</metric>
+	
+	<metric name="IsController" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Controller.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Controller", and value 0 for dependencies that do not have stereotype
+		"Controller".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Controller'" />
+	</metric>	
+	
+	<metric name="IsController" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Controller.
+		((p)) This metric has value 1 for components with stereotype
+		"Controller", and value 0 for components that do not have stereotype
+		"Controller".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Controller'" />
+	</metric>
+	
+	<metric name="ControllerInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Controller through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsController=1"/>
+	</metric>
+
+	<metric name="ControllerComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Controller' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsController=1" />
+	</metric>
+	
+	<metric name="ControllerComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Controller' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsController=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="ControllerComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="ControllerInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Persistence -->
+	
+		<metric name="IsPersistence" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Persistence.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Persistence", and value 0 for interfaces that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="IsPersistence" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Persistence.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Persistence", and value 0 for dependencies that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Persistence'" />
+	</metric>	
+	
+	<metric name="IsPersistence" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Persistence.
+		((p)) This metric has value 1 for components with stereotype
+		"Persistence", and value 0 for components that do not have stereotype
+		"Persistence".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Persistence'" />
+	</metric>
+	
+	<metric name="PersistenceInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Persistence through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsPersistence=1"/>
+	</metric>
+
+	<metric name="PersistenceComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Persistence' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsPersistence=1" />
+	</metric>
+	
+	<metric name="PersistenceComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Persistence' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsPersistence=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="PersistenceComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="PersistenceInterfaceViaOP > 0" />
+	</metric>
+	
+	<!-- LabelPhoto -->
+	
+	<metric name="IsLabelPhoto" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to LabelPhoto.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"LabelPhoto", and value 0 for interfaces that do not have stereotype
+		"LabelPhoto".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='LabelPhoto'" />
+	</metric>
+	
+	<metric name="IsLabelPhoto" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to LabelPhoto.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"LabelPhoto", and value 0 for interfaces that do not have stereotype
+		"LabelPhoto".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='LabelPhoto'" />
+	</metric>
+	
+	<metric name="IsLabelPhoto" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to LabelPhoto.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"LabelPhoto", and value 0 for dependencies that do not have stereotype
+		"LabelPhoto".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='LabelPhoto'" />
+	</metric>	
+	
+	<metric name="IsLabelPhoto" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to LabelPhoto.
+		((p)) This metric has value 1 for components with stereotype
+		"LabelPhoto", and value 0 for components that do not have stereotype
+		"LabelPhoto".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='LabelPhoto'" />
+	</metric>
+	
+	<metric name="LabelPhotoInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to LabelPhoto through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsLabelPhoto=1"/>
+	</metric>
+
+	<metric name="LabelPhotoComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'LabelPhoto' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsLabelPhoto=1" />
+	</metric>
+	
+	<metric name="LabelPhotoComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'LabelPhoto' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsLabelPhoto=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="LabelPhotoComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="LabelPhotoInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- ExceptionHandling -->
+	
+	<metric name="IsExceptionHandling" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"ExceptionHandling", and value 0 for interfaces that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="IsExceptionHandling" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"ExceptionHandling", and value 0 for dependencies that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='ExceptionHandling'" />
+	</metric>	
+	
+	<metric name="IsExceptionHandling" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to ExceptionHandling.
+		((p)) This metric has value 1 for components with stereotype
+		"ExceptionHandling", and value 0 for components that do not have stereotype
+		"ExceptionHandling".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='ExceptionHandling'" />
+	</metric>
+	
+	<metric name="ExceptionHandlingInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to ExceptionHandling through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsExceptionHandling=1"/>
+	</metric>
+
+	<metric name="ExceptionHandlingComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'ExceptionHandling' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsExceptionHandling=1" />
+	</metric>
+	
+	<metric name="ExceptionHandlingComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'ExceptionHandling' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsExceptionHandling=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="ExceptionHandlingComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="ExceptionHandlingInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Favourites -->
+	
+	<metric name="IsFavourites" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Favourites.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Favourites", and value 0 for interfaces that do not have stereotype
+		"Favourites".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Favourites'" />
+	</metric>
+	
+	<metric name="IsFavourites" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Favourites.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Favourites", and value 0 for interfaces that do not have stereotype
+		"Favourites".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Favourites'" />
+	</metric>
+	
+	<metric name="IsFavourites" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Favourites.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Favourites", and value 0 for dependencies that do not have stereotype
+		"Favourites".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Favourites'" />
+	</metric>	
+	
+	<metric name="IsFavourites" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Favourites.
+		((p)) This metric has value 1 for components with stereotype
+		"Favourites", and value 0 for components that do not have stereotype
+		"Favourites".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Favourites'" />
+	</metric>
+	
+	<metric name="FavouritesInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Favourites through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsFavourites=1"/>
+	</metric>
+
+	<metric name="FavouritesComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Favourites' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsFavourites=1" />
+	</metric>
+	
+	<metric name="FavouritesComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Favourites' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsFavourites=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="FavouritesComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="FavouritesInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Copy -->
+	
+		<metric name="IsCopy" domain="operation" internal="true" category="aspect">
+	<description>
+		Indicates if the operation is assigned to Copy.
+		((p)) This metric has value 1 for interfaces with stereotype	
+		"Copy", and value 0 for interfaces that do not have stereotype
+		"Copy".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Copy'" />
+	</metric>
+	
+	<metric name="IsCopy" domain="interface" internal="true" category="aspect">
+	<description>
+		Indicates if the interface (provided) is assigned to Copy.
+		((p)) This metric has value 1 for interfaces with stereotype
+		"Copy", and value 0 for interfaces that do not have stereotype
+		"Copy".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Copy'" />
+	</metric>
+	
+	<metric name="IsCopy" domain="dependency" internal="true" category="aspect">
+	<description>
+		Indicates if the dependency (required interface) is assigned to Copy.
+		((p)) This metric has value 1 for dependencies with stereotype
+		"Copy", and value 0 for dependencies that do not have stereotype
+		"Copy".
+	</description>
+	<projection relset="stereotypes" target="stereotype" targetcondition="name='Copy'" />
+	</metric>	
+	
+	<metric name="IsCopy" domain="component" internal="true" category="aspect">
+	<description>
+		Indicates if the component is assigned to Copy.
+		((p)) This metric has value 1 for components with stereotype
+		"Copy", and value 0 for components that do not have stereotype
+		"Copy".
+	</description>
+	<projection relset="stereotypes" target="stereotype" condition="name='Copy'" />
+	</metric>
+	
+	<metric name="CopyInterfaceViaOP" domain="interface" internal="true" category="aspect">	
+	<description>
+		Indicates if the interface is assigned to Copy through some operation.		
+	</description>
+	<projection relation="context" target="operation" condition="IsCopy=1"/>
+	</metric>
+
+	<metric name="CopyComponentViaPIF" domain="component" internal="true" category="aspect">
+		<description>
+			The number of provided interfaces linked via a 'Copy' dependency.
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="IsCopy=1" />
+	</metric>
+	
+	<metric name="CopyComponentViaRIF" domain="component" internal="true" category="aspect">
+	<description>
+		The number of required interfaces linked via a 'Copy' dependency.
+	</description>
+	<projection relation="depclient" target="dependency" 
+	targetcondition="IsCopy=1 and IsRequiredInterface=1" element="depsupplier" eltype="interface" />
+	</metric>
+	
+	<metric name="CopyComponentViaOP" domain="component" internal="true" category="aspect">
+		<description>
+			
+		</description>
+		<projection relation="absclient" target="abstraction" element="abssupplier"
+		condition="CopyInterfaceViaOP > 0" />
+	</metric>	
+	
+	<!-- Interaction Between Concerns - Favourites -->
+	
+	<!-- CIBC -->
+	
+	<metric name="CIBCFavouritesControllerTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsFavourites=1 and IsController > 0) or (IsFavourites=1 and (ControllerComponentViaPIF > 0 or ControllerComponentViaRIF > 0))
+	or (IsFavourites=1 and ControllerComponentViaOP > 0) 
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and (ControllerComponentViaPIF > 0 or ControllerComponentViaRIF > 0))
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and ControllerComponentViaOP > 0) 
+	or (FavouritesComponentViaOP > 0 and ControllerComponentViaOP > 0)"/>
+	</metric>	
+	
+	<metric name="CIBCFavouritesLabelPhotoTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsFavourites=1 and IsLabelPhoto > 0) or (IsFavourites=1 and (LabelPhotoComponentViaPIF > 0 or LabelPhotoComponentViaRIF > 0))
+	or (IsFavourites=1 and LabelPhotoComponentViaOP > 0) 
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and (LabelPhotoComponentViaPIF > 0 or LabelPhotoComponentViaRIF > 0))
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and LabelPhotoComponentViaOP > 0) 
+	or (FavouritesComponentViaOP > 0 and LabelPhotoComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesExceptionHandlingTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsFavourites=1 and IsExceptionHandling > 0) or (IsFavourites=1 and (ExceptionHandlingComponentViaPIF > 0 or ExceptionHandlingComponentViaRIF > 0))
+	or (IsFavourites=1 and ExceptionHandlingComponentViaOP > 0) 
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and (ExceptionHandlingComponentViaPIF > 0 or ExceptionHandlingComponentViaRIF > 0))
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and ExceptionHandlingComponentViaOP > 0) 
+	or (FavouritesComponentViaOP > 0 and ExceptionHandlingComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesCopyTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsFavourites=1 and IsCopy > 0) or (IsFavourites=1 and (CopyComponentViaPIF > 0 or CopyComponentViaRIF > 0))
+	or (IsFavourites=1 and CopyComponentViaOP > 0) 
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and (CopyComponentViaPIF > 0 or CopyComponentViaRIF > 0))
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and CopyComponentViaOP > 0) 
+	or (FavouritesComponentViaOP > 0 and CopyComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesPersistenceTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="component"
+	condition="(IsFavourites=1 and IsPersistence > 0) or (IsFavourites=1 and (PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0))
+	or (IsFavourites=1 and PersistenceComponentViaOP > 0) 
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and (PersistenceComponentViaPIF > 0 or PersistenceComponentViaRIF > 0))
+	or ((FavouritesComponentViaPIF > 0 or FavouritesComponentViaRIF > 0) and PersistenceComponentViaOP > 0) 
+	or (FavouritesComponentViaOP > 0 and PersistenceComponentViaOP > 0)"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesController" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCFavouritesControllerTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCFavouritesPersistenceTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCFavouritesExceptionHandlingTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesLabelPhoto" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCFavouritesLabelPhotoTotal > 0"/>
+	</metric>
+	
+	<metric name="CIBCFavouritesCopy" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="CIBCFavouritesCopyTotal > 0"/>
+	</metric>	
+	
+	<metric name="CIBCFavouritesTotal" domain="model" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	term="CIBCFavouritesPersistence + CIBCFavouritesLabelPhoto + CIBCFavouritesExceptionHandling + CIBCFavouritesController + CIBCFavouritesCopy"/>
+	</metric>	
+	
+	<!-- IIBC -->
+	
+	<metric name="IIBCFavouritesPersistenceTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsFavourites=1 and PersistenceInterfaceViaOP > 0) 
+	or (FavouritesInterfaceViaOP > 0 and PersistenceInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesLabelPhotoTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsFavourites=1 and LabelPhotoInterfaceViaOP > 0) 
+	or (FavouritesInterfaceViaOP > 0 and LabelPhotoInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesExceptionHandlingTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsFavourites=1 and ExceptionHandlingInterfaceViaOP > 0) 
+	or (FavouritesInterfaceViaOP > 0 and ExceptionHandlingInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesControllerTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsFavourites=1 and ControllerInterfaceViaOP > 0) 
+	or (FavouritesInterfaceViaOP > 0 and ControllerInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesCopyTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="(IsFavourites=1 and CopyInterfaceViaOP > 0) 
+	or (FavouritesInterfaceViaOP > 0 and CopyInterfaceViaOP > 0)"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesController" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCFavouritesControllerTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCFavouritesPersistenceTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCFavouritesExceptionHandlingTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesLabelPhoto" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCFavouritesLabelPhotoTotal > 0"/>
+	</metric>
+	
+	<metric name="IIBCFavouritesCopy" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="IIBCFavouritesCopyTotal > 0"/>
+	</metric>	
+	
+	<metric name="IIBCFavouritesTotal" domain="model" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	term="IIBCFavouritesPersistence + IIBCFavouritesLabelPhoto + IIBCFavouritesExceptionHandling + IIBCFavouritesController + IIBCFavouritesCopy"/>
+	</metric>
+	
+	<!-- OOBC -->
+	
+	<metric name="OOBCGC" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsFavourites=1) and (IsPersistence=1)"/>
+	</metric>
+	
+	<metric name="OOBCGD" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsFavourites=1) and (IsLabelPhoto=1)"/>
+	</metric>
+	
+	<metric name="OOBCGE" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsFavourites=1) and (IsExceptionHandling=1)"/>
+	</metric>	
+	
+	<metric name="OOBCGB" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsFavourites=1) and (IsController=1)"/>
+	</metric>	
+	
+	<metric name="OOBCGL" domain="interface" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="operation"
+	condition="(IsFavourites=1) and (IsCopy=1)"/>
+	</metric>		
+	
+	<metric name="OOBCGCTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCGC > 0"/>
+	</metric>
+	
+	<metric name="OOBCGDTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCGD > 0"/>
+	</metric>
+	
+	<metric name="OOBCGETotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCGE > 0"/>
+	</metric>
+	
+	<metric name="OOBCGBTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCGB > 0"/>
+	</metric>	
+	
+	<metric name="OOBCGLTotal" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<projection relation="context" target="interface"
+	condition="OOBCGL > 0"/>
+	</metric>		
+	
+	<metric name="OOBCFavouritesPersistence" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="OOBCGCTotal > 0"/>
+	</metric>
+	
+	<metric name="OOBCFavouritesLabelPhoto" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCGDTotal > 0"/>
+	</metric>
+	
+	<metric name="OOBCFavouritesExceptionHandling" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCGETotal > 0"/>
+	</metric>	
+	
+	<metric name="OOBCFavouritesController" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	condition="OOBCGBTotal > 0"/>
+	</metric>	
+	
+	<metric name="OOBCFavouritesCopy" domain="model" internal="true" category="aspect">
+	<description>
+	</description>
+	<compoundmetric condition="OOBCGLTotal > 0"/>
+	</metric>	
+	
+	<metric name="OOBCFavouritesTotal" domain="model" category="aspect">
+	<description>
+	</description>
+	<compoundmetric	term="(OOBCFavouritesPersistence + OOBCFavouritesLabelPhoto + OOBCFavouritesExceptionHandling + OOBCFavouritesController + OOBCFavouritesCopy)"/>
+	</metric>
+	
+</sdmetrics>
