@@ -1,0 +1,1 @@
+Este projeto contém os arquivos de configuração para a utilização da ferramenta SDMetrics (http://www.sdmetrics.com/) na automatização de Métricas Arquiteturais Convencionais e Sensíveis a Interesses.
